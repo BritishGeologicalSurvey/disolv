@@ -20,7 +20,9 @@ def ConvertFEC(InData,Temp):
 
 #---------------------Get input parameters-----------------------
 
-Parameters = np.genfromtxt("Input\\in.dat",skip_footer=1)
+InDat = os.path.join("Input","in.dat")
+
+Parameters = np.genfromtxt(InDat,skip_footer=1)
 
 length = Parameters[0]
 z = Parameters[1]
@@ -31,8 +33,8 @@ FECconvert = Parameters[5]
 Temp = Parameters[6]
 Calibrate = Parameters[7]
 
-Bounds = np.genfromtxt("Input\\in.dat",skip_header=16,skip_footer=1)
-t = np.genfromtxt("Input\\in.dat",skip_header=18)
+Bounds = np.genfromtxt(InDat,skip_header=16,skip_footer=1)
+t = np.genfromtxt(InDat,skip_header=18)
 t = np.concatenate((np.array([0]),t))
 
 #----------------------------Grid---------------------------------
@@ -42,8 +44,8 @@ x = np.linspace(0,length,N_nodes)
 
 #---------Initial condition and Observations-----------------------
 
-in_con_raw = np.genfromtxt('Input\\initialcondition.dat',skip_header=1)
-ObsProfilesRaw = np.genfromtxt("Input\\measuredprofiles.dat",skip_header=1)
+in_con_raw = np.genfromtxt(os.path.join("Input","initial_condition.dat"),skip_header=1)
+ObsProfilesRaw = np.genfromtxt(os.path.join("Input","measuredprofiles.dat"),skip_header=1)
 
 x = np.linspace(0,length,N_nodes)
 
@@ -68,7 +70,7 @@ for i in range(NObs):
 
 #------------------------Make sure Qin = Qout---------------------
 
-indata = np.genfromtxt("Input\\flows.dat",skip_header=1)[:,:2]
+indata = np.genfromtxt(os.path.join("Input","flows.dat"),skip_header=1)[:,:2]
 
 Nflows = np.shape(indata)[0]
 
@@ -121,7 +123,7 @@ for j in range(N_nodes):
         OutStr.append(str(out_values[i,j]) + '\t')
     OutStr.append('\n')
 
-f = open('Output\\profiles.out', 'w')
+f = open(os.path.join("Output","profiles.out"), 'w')
 for item in OutStr:
 	f.write("%s" % item)
 f.close()
