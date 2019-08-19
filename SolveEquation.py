@@ -102,7 +102,7 @@ def forward(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,in_con,t,A):
     
     return wsol
 
-def inverse(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,in_con,t,A,Obs,Bound,FracBounds):
+def inverse(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,in_con,t,A,Obs,Bound,FracBounds,method):
 
     def CalculateRMSE(invec):
         
@@ -157,7 +157,7 @@ def inverse(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,in_con,t,A,Obs,Bound,Frac
     
     parambounds = ((Bound[0],Bound[1]),) + a + b + FracBounds + ((Bound[2],Bound[3]),)
      
-    return minimize(CalculateRMSE,param,method='L-BFGS-B',bounds=parambounds)
+    return minimize(CalculateRMSE,param,method=method,bounds=parambounds)
 
 
 
