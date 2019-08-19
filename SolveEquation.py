@@ -11,6 +11,9 @@ from scipy.sparse import diags
 from scipy.optimize import minimize
 import sys
 
+def Checks(InDat,Bounds,t,in_con_raw,ObsProfilesRaw,indata):
+    
+    return
 
 def WriteMatrix(N_nodes,inflows,outflows,z,alpha,Cc,Nflows):
     
@@ -99,14 +102,14 @@ def forward(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,in_con,t,A):
     
     return wsol
 
-def inverse(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,in_con,t,A,Obs,Bound):
+def inverse(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,in_con,t,A,Obs,Bound,FracBounds):
 
     def CalculateRMSE(invec):
         
                 
         alpha = invec[0]
         variable_inflow = invec[1:int(1 + Nflows)]
-        variable_outflow = invec[int(1 + Nflows):-1]
+        variable_outflow = invec[int(1 + Nflows):-int(1 + Nflows)]
         
         inflows[:,1] =  variable_inflow/np.sum(variable_inflow) * invec[-1]
         outflows[:,1] = variable_outflow/np.sum(variable_outflow) * invec[-1]
@@ -134,8 +137,10 @@ def inverse(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,in_con,t,A,Obs,Bound):
     
     Ini_tot_flow = np.sum(inflows[:,1])
     
+    FracLocations = inflows[:,0] + outflows[:,0]
+    
     #create parameter array input
-    param = [alpha] + inflow_frac.tolist() + outflow_frac.tolist() + [Ini_tot_flow]  
+    param = [alpha] + inflow_frac.tolist() + outflow_frac.tolist() + FracLocations.tolist() + [Ini_tot_flow]
     #create bounds input
     a = ()
     b = ()
@@ -150,7 +155,7 @@ def inverse(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,in_con,t,A,Obs,Bound):
             b = b + ((0.01,1),)
             
     
-    parambounds = ((Bound[0],Bound[1]),) + a + b + ((Bound[2],Bound[3]),)
+    parambounds = ((Bound[0],Bound[1]),) + a + b + FracBounds + ((Bound[2],Bound[3]),)
      
     return minimize(CalculateRMSE,param,method='L-BFGS-B',bounds=parambounds)
 
