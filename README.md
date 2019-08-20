@@ -2,6 +2,11 @@
 
 The following is a brief description of the input/output structure. For a full description of the code see our paper: LINK.
 
+## Installation
+
+DiSolver can be installed for Python 2.7 or Python 3 using pip:
+
+    pip install disolver
 
 ## Structure of input files
 
