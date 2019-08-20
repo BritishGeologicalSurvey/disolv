@@ -31,6 +31,10 @@ def run(InDir,OutDir, calibrate='False', convertFEC = 'False', method='SLSQP'):
     
     Parameters = np.genfromtxt(InDat,delimiter=',',skip_footer=1)[:-1,0]
     
+    if len(Parameters) < 7:
+        raise Exception('There are variables missing from the input file. Please check.')
+    
+    
     GWlevel = Parameters[0]
     BHdepth = Parameters[1]
     z = Parameters[2]
