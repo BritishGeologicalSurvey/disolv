@@ -45,4 +45,4 @@ The modelled depth vs. concentration data can be found in *Output\profiles.csv*.
 
 The modelled data and measured data (if given) are plotted in *profiles.csv*.
 
-![In file 5](/Output/profiles.png)
+![In file 5](/Output/Berambadi.png)
