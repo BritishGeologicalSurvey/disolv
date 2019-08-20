@@ -10,6 +10,8 @@ import numpy as np
 import SolveEquation
 import matplotlib.pyplot as plt
 import pandas as pd
+import argparse
+
 
 
 def run(InDir,OutDir, calibrate='False', convertFEC = 'False', method='SLSQP'):
@@ -29,16 +31,19 @@ def run(InDir,OutDir, calibrate='False', convertFEC = 'False', method='SLSQP'):
     
     Parameters = np.genfromtxt(InDat,delimiter=',',skip_footer=1)[:-1,0]
     
-    length = Parameters[0]
-    z = Parameters[1]
-    A = Parameters[2]
-    alpha = Parameters[3]
-    Cc = Parameters[4]
-    Temp = Parameters[5]
+    GWlevel = Parameters[0]
+    BHdepth = Parameters[1]
+    z = Parameters[2]
+    A = Parameters[3]
+    alpha = Parameters[4]
+    Cc = Parameters[5]
+    Temp = Parameters[6]
+    
+    SatColumn = z * round((BHdepth - GWlevel)/z)
     
     
-    Bounds = np.genfromtxt(InDat,delimiter=',',skip_header=12,skip_footer=1)[:4]
-    t = np.genfromtxt(InDat,delimiter=',',skip_header=14)
+    Bounds = np.genfromtxt(InDat,delimiter=',',skip_header=14,skip_footer=1)[:4]
+    t = np.genfromtxt(InDat,delimiter=',',skip_header=16)
     t = t[np.isfinite(t)]
     t = np.concatenate((np.array([0]),t))
     
@@ -78,13 +83,10 @@ def run(InDir,OutDir, calibrate='False', convertFEC = 'False', method='SLSQP'):
     print(str(NObs) + " measured profiles have been found")
     #----------------------------Grid---------------------------------
     
-    N_nodes = int(round((length+z)/z))
-    x = np.linspace(0,length,N_nodes)
+    N_nodes = int((SatColumn+z)/z)
+    x = np.linspace(0,SatColumn,N_nodes)
     
     #---------Initial condition and Observations-----------------------
-    
-    
-    x = np.linspace(0,length,N_nodes)
     
     
     ObservedProfiles = np.zeros([len(x),NObs])
@@ -96,12 +98,12 @@ def run(InDir,OutDir, calibrate='False', convertFEC = 'False', method='SLSQP'):
     else:
         Concentrations = in_con_raw[:,1]
     
-    in_con = np.interp(x,in_con_raw[:,0],Concentrations)
+    in_con = np.interp(x,in_con_raw[:,0]-GWlevel,Concentrations)
     
     #Oberservation x points for automatic calibration
     
     for i in range(NObs):
-        ObservedProfiles[:,i] = np.interp(x,ObsProfilesRaw[:,2*i],ObsProfilesRaw[:,2*i + 1])
+        ObservedProfiles[:,i] = np.interp(x,ObsProfilesRaw[:,2*i]-GWlevel,ObsProfilesRaw[:,2*i + 1])
     
     
     
@@ -109,6 +111,9 @@ def run(InDir,OutDir, calibrate='False', convertFEC = 'False', method='SLSQP'):
     
     indata = np.genfromtxt(os.path.join(InDir,"flows.csv"),delimiter=',',skip_header=1)
     Nflows = np.shape(indata)[0]
+    
+    indata[:,0] = indata[:,0] - GWlevel
+    indata[:,2:] = indata[:,2:] - GWlevel
     
     for i in range(Nflows):
         
@@ -129,15 +134,17 @@ def run(InDir,OutDir, calibrate='False', convertFEC = 'False', method='SLSQP'):
             inflows[i,0] = indata[i,0]
             inflows[i,1] = indata[i,1]
             
-     
+    
+    
     #-------------------Call function that solves equation----------------
+    
     if calibrate == 'False':
         sim_profiles = SolveEquation.forward(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,in_con,t,A)
-    
+        
     
     #-------------------------Automatic calibration------------------------
      
-    if calibrate == 'True':
+    elif calibrate == 'True':
         
         FracBounds = ()
         
@@ -158,6 +165,7 @@ def run(InDir,OutDir, calibrate='False', convertFEC = 'False', method='SLSQP'):
         
         sim_profiles = SolveEquation.forward(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,in_con,t,A)
         
+        
                  
         
     out_values = np.zeros([N_nodes,NObs])
@@ -170,7 +178,7 @@ def run(InDir,OutDir, calibrate='False', convertFEC = 'False', method='SLSQP'):
     for i in range(len(t)-1):
         colheads.append("t = " + str(t[i+1]))
     
-    dfout = pd.DataFrame(data=out_values,index=x, columns=colheads)
+    dfout = pd.DataFrame(data=out_values,index=x+GWlevel, columns=colheads)
     dfout.index.name = "Depth [L]"
     dfout.to_csv(os.path.join(OutDir,"profiles.csv"))
     
@@ -179,9 +187,9 @@ def run(InDir,OutDir, calibrate='False', convertFEC = 'False', method='SLSQP'):
         out = "Dispersivity, " + str(alpha) + "\n" + "Flow rates" + "\n" + "Depth [L]" + "," + "Flow [L^2T^-1]" + "\n"
         for i in range(Nflows):
             if inflows[i,1] != 0:  
-                out = out + str(inflows[i,0]) + ',' + str(inflows[i,1]) + '\n' 
+                out = out + str(inflows[i,0] + GWlevel) + ',' + str(inflows[i,1]) + '\n' 
             else:
-                out = out + str(outflows[i,0]) + ',' + str(outflows[i,1]) + '\n'
+                out = out + str(outflows[i,0] + GWlevel) + ',' + str(outflows[i,1]) + '\n'
         f = open(os.path.join(OutDir,'Output.csv'), 'w')
         for item in out:
         	f.write("%s" % item)
@@ -192,7 +200,7 @@ def run(InDir,OutDir, calibrate='False', convertFEC = 'False', method='SLSQP'):
     
     plt.figure(figsize=(5,8))
     for i in range(len(t)-1):
-        plt.plot(sim_profiles[i+1,:],x,label=str(t[i+1]))
+        plt.plot(sim_profiles[i+1,:],x+GWlevel,label=str(t[i+1]))
         if ObsExist:
             plt.scatter(ObsProfilesRaw[:,2*i + 1],ObsProfilesRaw[:,2*i])
     
@@ -202,7 +210,18 @@ def run(InDir,OutDir, calibrate='False', convertFEC = 'False', method='SLSQP'):
     plt.gca().invert_yaxis()
     plt.savefig(os.path.join(OutDir, 'profiles.png'))
 
+
+def main():
+    """
+    Run the solver with default arguments
+    """
+    in_dir = os.path.join(os.getcwd(), 'Input')
+    out_dir = os.path.join(os.getcwd(), 'Output')
+    run(in_dir, out_dir, calibrate='False', convertFEC = 'False', method='SLSQP')
+    
+    
     
 if __name__ == "__main__":
     
     main()
+    
