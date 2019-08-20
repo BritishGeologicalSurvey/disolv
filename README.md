@@ -6,8 +6,7 @@ The following is a brief description of the input/output structure. For a full d
 ## Structure of input files
 
 ### in.csv
-This file contains the main input parameters as well as switches for turning automated calibration and conversion of FEC on/off.
-Do not delete any lines from the file.
+This file contains the main input parameters. Do not delete any lines from the file.
 
 ![In file 1](/Images/incsv.PNG)
 
@@ -26,6 +25,19 @@ This file contains the depth vs. concentration data for the initial state. DiSol
 This file contains the measured profiles at the output times defined in *in.csv*. This is a required input for inversion modelling but optional for forward modelling.
 
 ![In file 4](/Images/measured.PNG)
+
+## Running the model
+
+DiSolver can be imported and run as follows:
+
+    import disolver
+    disolver.run(InDirectory, OutDirectory, calibrate='False', convertFEC='False')
+    
+The first and second arguments are the file paths to the input and output directories. Calibrate refers to whether the model is being run in forward ('False') or inverse ('True') mode, and convertFEC indicates whether the initial condition has been given in fluid electrical conductivity (μS cm−1) and must be converted to concentration (in kg m−3) (‘True’) or whether it has been given as a concentration (‘False’).
+
+If DiSolver is run in inverse mode, the optimization method can be chosen in the final argument:
+    
+    disolver.run("Input", "Output", calibrate='True', convertFEC='False',method='SLSQP')
 
 ## Output
 
