@@ -1,4 +1,4 @@
-# DISOLV.py
+# DISOLV
 
 The following is a brief description of the input/output structure. For a full description of the code see our paper: LINK.
 
@@ -21,7 +21,7 @@ This file contains the depths and flow rates of the fractures. If used in forwar
 ![In file 2](/Images/flowscsv.PNG)
 
 ### initialcondition.csv
-This file contains the depth vs. concentration data for the initial state. DiSolve.py will interpolate the data onto a 1D grid with the spatial discretization given in *in.csv*. If these data are FEC data rather than concentration data (e.g. in kg/m<sup>3</sup>), set "*Initial condition given as concentration (1) or as FEC (2)*" to 2 in *in.csv*. 
+This file contains the depth vs. concentration data for the initial state. DISOLV will interpolate the data onto a 1D grid with the spatial discretization given in *in.csv*. If these data are FEC data rather than concentration data (e.g. in kg/m<sup>3</sup>), set "*Initial condition given as concentration (1) or as FEC (2)*" to 2 in *in.csv*. 
 
 ![In file 3](/Images/incon.PNG)
 
