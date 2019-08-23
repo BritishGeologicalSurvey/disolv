@@ -14,7 +14,7 @@ import argparse
 
 
 
-def run(InDir,OutDir, calibrate='False', convertFEC = 'False', method='SLSQP'):
+def run(InDir,OutDir, calibrate='False', convertFEC = 'True', method='SLSQP'):
     
     def ConvertFEC(InData,Temp):
     
@@ -79,9 +79,9 @@ def run(InDir,OutDir, calibrate='False', convertFEC = 'False', method='SLSQP'):
     
     
     #---Print information
-    if calibrate == 'False':
+    if not calibrate:
         print("No automatic calibration")
-    elif calibrate == 'True':
+    else:
         print("Automatic calibration")
     
     print("Equation will be solved at times " + str(t[1:].tolist()).strip('[]'))
@@ -96,7 +96,7 @@ def run(InDir,OutDir, calibrate='False', convertFEC = 'False', method='SLSQP'):
     
     ObservedProfiles = np.zeros([len(x),NObs])
     
-    if convertFEC == 'True':
+    if convertFEC:
         Concentrations = ConvertFEC(in_con_raw[:,1],Temp)
         for i in range(NObs):
             ObsProfilesRaw[:,2*i + 1] = ConvertFEC(ObsProfilesRaw[:,2*i + 1],Temp)
@@ -143,13 +143,13 @@ def run(InDir,OutDir, calibrate='False', convertFEC = 'False', method='SLSQP'):
     
     #-------------------Call function that solves equation----------------
     
-    if calibrate == 'False':
+    if not calibrate:
         sim_profiles = SolveEquation.forward(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,in_con,t,A,Dd)
         
     
     #-------------------------Automatic calibration------------------------
      
-    elif calibrate == 'True':
+    else:
         
         FracBounds = ()
         
@@ -187,7 +187,7 @@ def run(InDir,OutDir, calibrate='False', convertFEC = 'False', method='SLSQP'):
     dfout.index.name = "Depth [L]"
     dfout.to_csv(os.path.join(OutDir,"profiles.csv"))
     
-    if calibrate == 'True':
+    if calibrate:
         
         out = "Dispersivity, " + str(alpha) + "\n" + "Flow rates" + "\n" + "Depth [L]" + "," + "Flow [L^2T^-1]" + "\n"
         for i in range(Nflows):
@@ -220,9 +220,20 @@ def main():
     """
     Run the solver with default arguments
     """
-    in_dir = os.path.join(os.getcwd(), 'Input')
-    out_dir = os.path.join(os.getcwd(), 'Output')
-    run(in_dir, out_dir, calibrate='False', convertFEC = 'False', method='SLSQP')
+    my_parser = argparse.ArgumentParser()
+    my_parser.add_argument('-indir', default='Input')
+    my_parser.add_argument('-outdir', default='Output')
+    my_parser.add_argument('-calibrate', action='store_true')
+    my_parser.add_argument('-convertFEC', action='store_true')
+    my_parser.add_argument('-method', default='SLSQP')
+    
+    args = my_parser.parse_args()
+    
+        
+    in_dir = os.path.join(os.getcwd(), args.indir)
+    out_dir = os.path.join(os.getcwd(), args.outdir)
+    
+    run(in_dir, out_dir, calibrate=args.calibrate, convertFEC = args.convertFEC, method=args.method)
     
     
     
