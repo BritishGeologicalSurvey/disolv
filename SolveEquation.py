@@ -11,11 +11,8 @@ from scipy.sparse import diags
 from scipy.optimize import minimize
 import sys
 
-def Checks(InDat,Bounds,t,in_con_raw,ObsProfilesRaw,indata):
-    
-    return
 
-def WriteMatrix(N_nodes,inflows,outflows,z,alpha,Cc,Nflows):
+def WriteMatrix(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,Dd):
     
         
     if abs(np.sum(inflows[:,1]) - np.sum(outflows[:,1]))/np.sum(inflows[:,1]) > 0.001:
@@ -55,8 +52,8 @@ def WriteMatrix(N_nodes,inflows,outflows,z,alpha,Cc,Nflows):
     Flow_front = Flow_front * z
     Flow_back = Flow_back * z
         
-    Dfront = abs(Flow_front * alpha)
-    Dback = abs(Flow_back * alpha)
+    Dfront = abs(Flow_front * alpha) + Dd
+    Dback = abs(Flow_back * alpha) + Dd
     
 
     
@@ -89,9 +86,9 @@ def WriteMatrix(N_nodes,inflows,outflows,z,alpha,Cc,Nflows):
     
     return Matrix, p6
 
-def forward(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,in_con,t,A):
+def forward(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,in_con,t,A,Dd):
     
-    Matrix, p6 = WriteMatrix(N_nodes,inflows,outflows,z,alpha,Cc,Nflows)[0],WriteMatrix(N_nodes,inflows,outflows,z,alpha,Cc,Nflows)[1]
+    Matrix, p6 = WriteMatrix(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,Dd)[0],WriteMatrix(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,Dd)[1]
             
     #Make function
     def dX_dt(sm, t):
@@ -102,7 +99,7 @@ def forward(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,in_con,t,A):
     
     return wsol
 
-def inverse(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,in_con,t,A,Obs,Bound,FracBounds,method):
+def inverse(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,in_con,t,A,Obs,Bound,FracBounds,method,Dd):
 
     def CalculateRMSE(invec):
         
@@ -115,7 +112,7 @@ def inverse(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,in_con,t,A,Obs,Bound,Frac
         outflows[:,1] = variable_outflow/np.sum(variable_outflow) * invec[-1]
                        
                 
-        Matrix, p6 = WriteMatrix(N_nodes,inflows,outflows,z,alpha,Cc,Nflows)[0],WriteMatrix(N_nodes,inflows,outflows,z,alpha,Cc,Nflows)[1]
+        Matrix, p6 = WriteMatrix(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,Dd)[0],WriteMatrix(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,Dd)[1]
             
         #Make function
         def dX_dt(sm, t):

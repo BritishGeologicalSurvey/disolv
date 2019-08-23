@@ -8,6 +8,8 @@
 0.0182,,,,
 #Dispersivity [L^-1],,,,
 0.236,,,,
+#Diffusion coefficient,,,,
+0.000001,,,,
 #Tracer concentration of water inflow,,,,
 0.701,,,,
 #Water temperature [Celsius] (only read if above is FEC),,,,

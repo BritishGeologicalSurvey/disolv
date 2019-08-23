@@ -31,7 +31,7 @@ def run(InDir,OutDir, calibrate='False', convertFEC = 'False', method='SLSQP'):
     
     Parameters = np.genfromtxt(InDat,delimiter=',',skip_footer=1)[:-1,0]
     
-    if len(Parameters) < 7:
+    if len(Parameters) < 8:
         raise Exception('There are variables missing from the input file. Please check.')
     
     
@@ -40,14 +40,15 @@ def run(InDir,OutDir, calibrate='False', convertFEC = 'False', method='SLSQP'):
     z = Parameters[2]
     A = Parameters[3]
     alpha = Parameters[4]
-    Cc = Parameters[5]
-    Temp = Parameters[6]
+    Dd = Parameters[5]
+    Cc = Parameters[6]
+    Temp = Parameters[7]
     
     SatColumn = z * round((BHdepth - GWlevel)/z)
     
     
-    Bounds = np.genfromtxt(InDat,delimiter=',',skip_header=14,skip_footer=1)[:4]
-    t = np.genfromtxt(InDat,delimiter=',',skip_header=16)
+    Bounds = np.genfromtxt(InDat,delimiter=',',skip_header=16,skip_footer=1)[:4]
+    t = np.genfromtxt(InDat,delimiter=',',skip_header=18)
     t = t[np.isfinite(t)]
     t = np.concatenate((np.array([0]),t))
     
@@ -111,7 +112,7 @@ def run(InDir,OutDir, calibrate='False', convertFEC = 'False', method='SLSQP'):
     
     
     
-    #------------------------Make sure Qin = Qout---------------------
+    #------------------------Put flows in arrays---------------------
     
     indata = np.genfromtxt(os.path.join(InDir,"flows.csv"),delimiter=',',skip_header=1)
     Nflows = np.shape(indata)[0]
@@ -143,7 +144,7 @@ def run(InDir,OutDir, calibrate='False', convertFEC = 'False', method='SLSQP'):
     #-------------------Call function that solves equation----------------
     
     if calibrate == 'False':
-        sim_profiles = SolveEquation.forward(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,in_con,t,A)
+        sim_profiles = SolveEquation.forward(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,in_con,t,A,Dd)
         
     
     #-------------------------Automatic calibration------------------------
@@ -159,7 +160,7 @@ def run(InDir,OutDir, calibrate='False', convertFEC = 'False', method='SLSQP'):
             for i in range(Nflows):
                 FracBounds = FracBounds + ((indata[i,0],indata[i,0]),)
                 
-        output = SolveEquation.inverse(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,in_con,t,A,ObservedProfiles,Bounds,FracBounds,method)
+        output = SolveEquation.inverse(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,in_con,t,A,ObservedProfiles,Bounds,FracBounds,method,Dd)
         
         alpha = output.x[0]
         inflows[:,1] = output.x[1:(Nflows+1)]/np.sum(output.x[1:(Nflows+1)]) * output.x[-1]
@@ -167,7 +168,7 @@ def run(InDir,OutDir, calibrate='False', convertFEC = 'False', method='SLSQP'):
         inflows[:,0] = output.x[-(Nflows+1):-1]
         outflows[:,0] = output.x[-(Nflows+1):-1]    
         
-        sim_profiles = SolveEquation.forward(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,in_con,t,A)
+        sim_profiles = SolveEquation.forward(N_nodes,inflows,outflows,z,alpha,Cc,Nflows,in_con,t,A,Dd)
         
         
                  
