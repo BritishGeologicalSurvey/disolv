@@ -1,12 +1,12 @@
-# DiSolver.py
+# DISOLV.py
 
 The following is a brief description of the input/output structure. For a full description of the code see our paper: LINK.
 
 ## Installation
 
-DiSolver can be installed for Python 2.7 or Python 3 using pip:
+DISOLV can be installed for Python 2.7 or Python 3 using pip:
 
-    pip install disolver
+    pip install disolv
 
 ## Structure of input files
 
@@ -33,16 +33,16 @@ This file contains the measured profiles at the output times defined in *in.csv*
 
 ## Running the model
 
-DiSolver can be imported and run as follows:
+DISOLV can be imported and run as follows:
 
-    import disolver
-    disolver.run(InDirectory, OutDirectory, calibrate='False', convertFEC='False')
+    import disolv
+    disolv.run(InDirectory, OutDirectory, calibrate='False', convertFEC='False')
     
 The first and second arguments are the file paths to the input and output directories. *Calibrate* refers to whether the model is being run in forward ('False') or inverse ('True') mode, and *convertFEC* indicates whether the initial condition has been given in fluid electrical conductivity (μS cm<sup>−1</sup>) and must be converted to concentration (in kg m<sup>−3</sup>) (‘True’) or whether it has been given as a concentration (‘False’).
 
-If DiSolver is run in inverse mode, the optimization method can be chosen in the final argument:
+If DISOLV is run in inverse mode, the optimization method can be chosen in the final argument:
     
-    disolver.run("Input", "Output", calibrate='True', convertFEC='False',method='SLSQP')
+    disolv.run("Input", "Output", calibrate='True', convertFEC='False',method='SLSQP')
 
 ## Output
 
