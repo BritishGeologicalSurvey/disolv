@@ -6,7 +6,17 @@ The following is a brief description of the input/output structure. For a full d
 
 DISOLV can be installed for Python 2.7 or Python 3 using pip:
 
-    pip install disolv
+```
+pip install disolv
+```
+
+It can be used within other Python code with:
+
+```python
+import disolv
+disolv.run('input_dir', 'output_dir', calibrate=True, convertFEC=True,
+           method='SLSQP')
+```
 
 ## Structure of input files
 
