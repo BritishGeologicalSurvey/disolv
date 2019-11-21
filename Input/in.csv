@@ -11,10 +11,10 @@
 #Diffusion coefficient [L^2/T],,,,
 0.000000001,,,,
 #Tracer concentration of water inflow [M/L^3],,,,
-0.701,,,,
+1.129,,,,
 #Water temperature [Celsius] (only read if above is FEC),,,,
 25,,,,
 # Bounds for automatic calibration of alpha and total inflow/outflow (AlphaMin AlphaMax FlowMin FlowMax),,,,
-0.2,0.3,20,30,
+0.2,0.3,4,6,
 #Times at which to output profiles [T],,,,
 0.025694444,0.060416667,0.097222222,0.129166667,0.157638889

@@ -14,7 +14,7 @@ See [https://github.com/sarcol-bgs/disolv/](https://github.com/sarcol-bgs/disolv
 """
 
 setup(name='disolv',
-      version='1.4',
+      version='1.5',
       license='GNU LGPLv3',
       description='Modelling dilution tests',
       long_description=LONG_DESCRIPTION,
@@ -22,13 +22,13 @@ setup(name='disolv',
       author='Sarah Collins',
       author_email='sarcol@bgs.ac.uk',
       url='https://github.com/sarcol-bgs/disolv/',
-      download_url='https://github.com/sarcol-bgs/disolv/archive/v1.4.tar.gz',
+      download_url='https://github.com/sarcol-bgs/disolv/archive/v1.5.tar.gz',
       py_modules=['disolv', 'SolveEquation'],
       install_requires=['numpy', 'scipy', 'matplotlib', 'pandas'],
       classifiers=[
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 2.7",
-        "License :: OSI Approved :: GNU General Public License v3 (LGPLv3)",
+        "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
         "Operating System :: OS Independent",
       ],
       )
