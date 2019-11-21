@@ -234,7 +234,7 @@ def run(InDir, OutDir, calibrate=False, convertFEC=True, method='SLSQP'):
     plt.ylabel('Depth below ground (m)')
     plt.gca().invert_yaxis()
     plt.savefig(os.path.join(OutDir, 'profiles.png'))
-#    plt.close()
+    plt.close()
 
 # ---------------------Calculate RMSE-------------------------------
 
