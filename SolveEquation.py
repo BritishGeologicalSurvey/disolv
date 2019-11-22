@@ -106,7 +106,7 @@ def forward(N_nodes, inflows, outflows, z, alpha, Cc, Nflows, in_con, t, A,
 
 
 def inverse(N_nodes, inflows, outflows, z, alpha, Cc, Nflows, in_con, t, A,
-            Obs, Bound, FracBounds, method, Dd):
+            Obs, Bound, FracBounds, method, Dd, minimise_param):
     """
     Inverse model
     """
@@ -163,4 +163,4 @@ def inverse(N_nodes, inflows, outflows, z, alpha, Cc, Nflows, in_con, t, A,
     parambounds = ((Bound[0], Bound[1]), ) + a + b + FracBounds +\
                     ((Bound[2], Bound[3]), )
 
-    return minimize(CalculateRMSE, param, method=method, bounds=parambounds)
+    return minimize(CalculateRMSE, param, method=method, bounds=parambounds, **minimise_param)

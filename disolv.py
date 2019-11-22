@@ -13,7 +13,7 @@ import pandas as pd
 import SolveEquation
 
 
-def run(InDir, OutDir, calibrate=False, convertFEC=True, method='SLSQP'):
+def run(InDir, OutDir, calibrate=False, convertFEC=True, method='SLSQP',**kwargs):
 
     """
 
@@ -36,6 +36,15 @@ def run(InDir, OutDir, calibrate=False, convertFEC=True, method='SLSQP'):
                 4.0791E-2 * FEC23**2 + 3.4996E-2 * FEC23 + 3.6104E-2) * 58.44
 
         return Concentrations
+# --------------------Minimise parameters-------------------------
+
+    minimise_param = {}
+    if kwargs is not None:
+        minimise_param.update(kwargs)
+    minimise_param.pop('fun',None)
+    minimise_param.pop('x0',None)
+    minimise_param.pop('method',None)
+    minimise_param.pop('constraints',None)
 
 # ---------------------Get input parameters-----------------------
 
@@ -175,7 +184,7 @@ def run(InDir, OutDir, calibrate=False, convertFEC=True, method='SLSQP'):
         output = SolveEquation.inverse(N_nodes, inflows, outflows, z, alpha,
                                        Cc, Nflows, in_con, t, A,
                                        ObservedProfiles, Bounds, FracBounds,
-                                       method, Dd)
+                                       method, Dd, minimise_param)
 
         alpha = output.x[0]
         inflows[:, 1] = output.x[1:(Nflows + 1)]/np.sum(
@@ -234,7 +243,7 @@ def run(InDir, OutDir, calibrate=False, convertFEC=True, method='SLSQP'):
     plt.ylabel('Depth below ground (m)')
     plt.gca().invert_yaxis()
     plt.savefig(os.path.join(OutDir, 'profiles.png'))
-#    plt.close()
+    plt.close()
 
 # ---------------------Calculate RMSE-------------------------------
 
@@ -255,6 +264,7 @@ def main():
     my_parser.add_argument('-calibrate', action='store_true')
     my_parser.add_argument('-convertFEC', action='store_true')
     my_parser.add_argument('-method', default='SLSQP')
+
 
     args = my_parser.parse_args()
 
