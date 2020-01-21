@@ -45,15 +45,18 @@ This file contains the measured profiles at the output times defined in *in.csv*
 
 DISOLV can be imported and run as follows:
 
+```python
     import disolv
-    disolv.run(InDirectory, OutDirectory, calibrate='False', convertFEC='False')
+    disolv.run(InDirectory, OutDirectory, calibrate=False, convertFEC=False)
+'''    
     
 The first and second arguments are the file paths to the input and output directories. *Calibrate* refers to whether the model is being run in forward ('False') or inverse ('True') mode, and *convertFEC* indicates whether the initial condition has been given in fluid electrical conductivity (μS cm<sup>−1</sup>) and must be converted to concentration (in kg m<sup>−3</sup>) (‘True’) or whether it has been given as a concentration (‘False’).
 
 If DISOLV is run in inverse mode, the optimization method can be chosen in the final argument:
-    
-    disolv.run("Input", "Output", calibrate='True', convertFEC='False',method='SLSQP')
 
+```python
+    disolv.run("Input", "Output", calibrate=True, convertFEC=False,method='SLSQP')
+'''
 ## Output
 
 The modelled depth vs. concentration data can be found in *Output\profiles.csv*. If used in inversion mode, *Output.csv* will contain the optimized output parameters.
