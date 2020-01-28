@@ -1,6 +1,6 @@
 # DISOLV
 
-The following is a brief description of the input/output structure. For a full description of the code see our paper: LINK.
+The following is a brief description of the input/output structure. For a full description of the code see our paper: Collins S, Bianchi M (2020) DISOLV: A Python package for the interpretation of borehole dilution tests. *Groundwater*.
 
 ## Installation
 
